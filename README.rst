@@ -1,3 +1,24 @@
+Pilate
+======
+
+Installation
+------------
+
+The recommended way of installing Pilate is by installing it using Docker, which can be done with the following commands:
+
+.. code-block:: shell
+
+    git clone --recursive https://github.com/PilateDev/docker.git pilate-docker
+    cd pilate-docker/
+    docker buildx build -t pilate .
+
+    cd docker-compose/
+
+Then just follow https://docs.weblate.org/en/latest/admin/install/docker.html#installation as usual, **except the clone part**.
+
+Below is Weblate's default readme
+---------------------------------
+
 .. image:: https://s.weblate.org/cdn/Logo-Darktext-borders.png
    :alt: Weblate
    :target: https://weblate.org/
