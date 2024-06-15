@@ -12,9 +12,9 @@ class GlosbeTranslation(MachineTranslation):
     max_score = 90
     do_cleanup = False
 
-    def map_code_code(self, code):
+    def map_language_code(self, code):
         """Convert language to service specific code."""
-        return code.replace("_", "-").split("-")[0].lower()
+        return super().map_language_code(code).replace("_", "-").split("-")[0].lower()
 
     def is_supported(self, source_language, target_language) -> bool:
         """Any language is supported."""
@@ -30,26 +30,20 @@ class GlosbeTranslation(MachineTranslation):
         threshold: int = 75,
     ) -> DownloadTranslations:
         """Download list of possible translations from a service."""
-        params = {
-            "from": source_language,
-            "dest": target_language,
-            "format": "json",
-            "phrase": text,
-        }
         response = self.request(
-            "get", "https://glosbe.com/gapi/translate", params=params
+            "post",
+            "https://translator-api.glosbe.com/translateByLangWithScore",
+            params={"sourceLang": source_language, "targetLang": target_language},
+            data=text,
+            headers={"Content-Type": "text/plain"},
         )
         payload = response.json()
 
-        if "tuc" not in payload:
+        if "translation" not in payload or payload["translation"] is None:
             return
-
-        for match in payload["tuc"]:
-            if "phrase" not in match or match["phrase"] is None:
-                continue
-            yield {
-                "text": match["phrase"]["text"],
-                "quality": self.max_score,
-                "service": self.name,
-                "source": text,
-            }
+        yield {
+            "text": payload["translation"],
+            "quality": self.max_score,
+            "service": self.name,
+            "source": text,
+        }
