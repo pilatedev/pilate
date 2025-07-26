@@ -451,3 +451,55 @@ class AzureOpenAIMachineryForm(BaseOpenAIMachineryForm):
         widget=forms.TextInput,
         help_text=gettext_lazy("The model's unique deployment name."),
     )
+
+
+class GPT4FreeMachineryForm(BaseMachineryForm):
+    try:
+        from g4f.client import AnyProvider
+    except ImportError:
+        MODEL_CHOICES = (
+            ("auto", pgettext_lazy("GPT4Free model selection", "Automatic selection")),
+        )
+    else:
+        # Ordering choices here defines priority for automatic selection
+        MODEL_CHOICES = (
+            ("auto", pgettext_lazy("GPT4Free model selection", "Automatic selection")),
+            *[
+                (model, model) for model in AnyProvider().models
+            ],
+        )
+
+    persona = forms.CharField(
+        label=pgettext_lazy(
+            "Automatic suggestion service configuration",
+            "Translator persona",
+        ),
+        widget=forms.Textarea,
+        help_text=gettext_lazy(
+            "Describe the persona of translator to improve the accuracy of the translation. For example: “You are a squirrel breeder.”"
+        ),
+        required=False,
+    )
+    style = forms.CharField(
+        label=pgettext_lazy(
+            "Automatic suggestion service configuration",
+            "Translator style",
+        ),
+        widget=forms.Textarea,
+        help_text=gettext_lazy(
+            "Describe the style of translation. For example: “Use informal language.”"
+        ),
+        required=False,
+    )
+    model = forms.ChoiceField(
+        label=pgettext_lazy(
+            "Automatic suggestion service configuration",
+            "GPT4Free model",
+        ),
+        initial="auto",
+        choices=MODEL_CHOICES,
+    )
+
+    def clean(self) -> None:
+        """Validate `custom_model, model` fields."""
+        super().clean()

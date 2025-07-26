@@ -1205,6 +1205,7 @@ WEBLATE_MACHINERY = [
     "weblate.machinery.alibaba.AlibabaTranslation",
     "weblate.machinery.baidu.BaiduTranslation",
     "weblate.machinery.deepl.DeepLTranslation",
+    "weblate.machinery.gpt4free.GPT4FreeTranslation",
     "weblate.machinery.glosbe.GlosbeTranslation",
     "weblate.machinery.google.GoogleTranslation",
     "weblate.machinery.googlev3.GoogleV3Translation",
